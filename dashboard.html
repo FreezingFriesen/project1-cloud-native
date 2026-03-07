@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Nutritional Insights</title>
+
+<style>
+
+body{
+font-family: Arial, Helvetica, sans-serif;
+margin:0;
+background:#f3f4f7;
+}
+
+/* header */
+.header{
+background:#2f6fed;
+color:white;
+padding:20px 40px;
+font-size:28px;
+font-weight:bold;
+}
+
+/* container */
+.container{
+max-width:1200px;
+margin:auto;
+padding:40px;
+}
+
+/* section titles */
+h2{
+margin-top:30px;
+margin-bottom:15px;
+}
+
+/* cards layout */
+.cards{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:20px;
+}
+
+/* card style */
+.card{
+background:white;
+border-radius:12px;
+padding:20px;
+box-shadow:0 4px 10px rgba(0,0,0,0.08);
+min-height:120px;
+}
+
+.card strong{
+font-size:18px;
+display:block;
+margin-bottom:5px;
+}
+
+.card p{
+color:#666;
+}
+
+/* filters */
+.filters input,
+.filters select{
+padding:10px;
+border-radius:8px;
+border:1px solid #ccc;
+margin-right:10px;
+}
+
+/* api buttons */
+.api-btn{
+padding:10px 18px;
+border:none;
+border-radius:8px;
+color:white;
+margin-right:10px;
+cursor:pointer;
+font-size:14px;
+}
+
+/* button colors */
+.api-btn:nth-child(1){
+background:#2f6fed;
+}
+
+.api-btn:nth-child(2){
+background:#1f9d63;
+}
+
+.api-btn:nth-child(3){
+background:#7b4df3;
+}
+
+/* active API button */
+.api-btn.active{
+outline:3px solid black;
+}
+
+/* pagination */
+.pagination{
+margin-top:20px;
+}
+
+.page-btn{
+padding:8px 14px;
+border-radius:6px;
+border:none;
+background:#d1d5db;
+margin-right:5px;
+cursor:pointer;
+font-size:14px;
+}
+
+/* active page */
+.page-btn.active{
+background:#2f6fed;
+color:white;
+outline:3px solid black;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+Nutritional Insights
+</div>
+
+<div class="container">
+
+<h2>Explore Nutritional Insights</h2>
+
+<div class="cards">
+
+<div class="card">
+<strong>Bar Chart</strong>
+<p>Average macronutrient content by diet type.</p>
+</div>
+
+<div class="card">
+<strong>Scatter Plot</strong>
+<p>Nutrient relationships (e.g., protein vs carbs).</p>
+</div>
+
+<div class="card">
+<strong>Heatmap</strong>
+<p>Nutrient correlations.</p>
+</div>
+
+<div class="card">
+<strong>Pie Chart</strong>
+<p>Recipe distribution by diet type.</p>
+</div>
+
+</div>
+
+<h2>Filters and Data Interaction</h2>
+
+<div class="filters">
+<input type="text" placeholder="Search by Diet Type">
+
+<select>
+<option selected>All Diet Types</option>
+<option>Vegan</option>
+<option>Keto</option>
+</select>
+</div>
+
+<h2>API Data Interaction</h2>
+
+<div class="api-buttons">
+
+<button class="api-btn active">Get Nutritional Insights</button>
+
+<button class="api-btn">Get Recipes</button>
+
+<button class="api-btn">Get Clusters</button>
+
+</div>
+
+<h2>Pagination</h2>
+
+<div class="pagination">
+
+<button class="page-btn">Previous</button>
+
+<button class="page-btn active">1</button>
+
+<button class="page-btn">2</button>
+
+<button class="page-btn">Next</button>
+
+</div>
+
+</div>
+
+<script>
+
+/* API button selection */
+const apiButtons = document.querySelectorAll(".api-btn");
+
+apiButtons.forEach(btn=>{
+btn.addEventListener("click",()=>{
+apiButtons.forEach(b=>b.classList.remove("active"));
+btn.classList.add("active");
+});
+});
+
+/* pagination selection */
+const pageButtons = document.querySelectorAll(".page-btn");
+
+pageButtons.forEach(btn=>{
+btn.addEventListener("click",()=>{
+pageButtons.forEach(b=>b.classList.remove("active"));
+btn.classList.add("active");
+});
+});
+
+</script>
+
+</body>
+</html>
