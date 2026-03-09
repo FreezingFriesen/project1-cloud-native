@@ -3,6 +3,8 @@
 <head>
 <title>Nutritional Insights</title>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <style>
 
 body{
@@ -11,7 +13,6 @@ margin:0;
 background:#f3f4f7;
 }
 
-/* header */
 .header{
 background:#2f6fed;
 color:white;
@@ -20,46 +21,37 @@ font-size:28px;
 font-weight:bold;
 }
 
-/* container */
 .container{
 max-width:1200px;
 margin:auto;
 padding:40px;
 }
 
-/* section titles */
 h2{
 margin-top:30px;
 margin-bottom:15px;
 }
 
-/* cards layout */
 .cards{
 display:grid;
 grid-template-columns:repeat(4,1fr);
 gap:20px;
 }
 
-/* card style */
 .card{
 background:white;
 border-radius:12px;
 padding:20px;
 box-shadow:0 4px 10px rgba(0,0,0,0.08);
-min-height:120px;
+min-height:250px;
 }
 
 .card strong{
 font-size:18px;
 display:block;
-margin-bottom:5px;
+margin-bottom:10px;
 }
 
-.card p{
-color:#666;
-}
-
-/* filters */
 .filters input,
 .filters select{
 padding:10px;
@@ -68,7 +60,6 @@ border:1px solid #ccc;
 margin-right:10px;
 }
 
-/* api buttons */
 .api-btn{
 padding:10px 18px;
 border:none;
@@ -79,7 +70,6 @@ cursor:pointer;
 font-size:14px;
 }
 
-/* button colors */
 .api-btn:nth-child(1){
 background:#2f6fed;
 }
@@ -92,12 +82,10 @@ background:#1f9d63;
 background:#7b4df3;
 }
 
-/* active API button */
 .api-btn.active{
 outline:3px solid black;
 }
 
-/* pagination */
 .pagination{
 margin-top:20px;
 }
@@ -112,11 +100,18 @@ cursor:pointer;
 font-size:14px;
 }
 
-/* active page */
 .page-btn.active{
 background:#2f6fed;
 color:white;
 outline:3px solid black;
+}
+
+#heatmap div{
+padding:5px;
+margin:3px 0;
+background:#e5e7eb;
+border-radius:4px;
+font-size:13px;
 }
 
 </style>
@@ -136,22 +131,29 @@ Nutritional Insights
 
 <div class="card">
 <strong>Bar Chart</strong>
-<p>Average macronutrient content by diet type.</p>
+<p id="barText">Average macronutrient content by diet type.</p>
+<canvas id="barChart" style="display:none;"></canvas>
 </div>
 
 <div class="card">
 <strong>Scatter Plot</strong>
-<p>Nutrient relationships (e.g., protein vs carbs).</p>
+<p id="scatterText">Nutrient relationships (e.g., protein vs carbs).</p>
+<canvas id="scatterChart" style="display:none;"></canvas>
 </div>
 
 <div class="card">
 <strong>Heatmap</strong>
-<p>Nutrient correlations.</p>
+<p id="heatmapText">Nutrient correlations.</p>
+
+<table id="heatmap" style="display:none; width:100%; text-align:center; border-collapse:collapse;">
+</table>
+
 </div>
 
 <div class="card">
 <strong>Pie Chart</strong>
-<p>Recipe distribution by diet type.</p>
+<p id="pieText">Recipe distribution by diet type.</p>
+<canvas id="pieChart" style="display:none;"></canvas>
 </div>
 
 </div>
@@ -198,17 +200,168 @@ Nutritional Insights
 
 <script>
 
+/* Data List */
+let data = [];
+
+/* Load CSV Data */
+function loadCSV(){
+
+Papa.parse("All_Diets.csv",{
+
+download:true,
+header:true,
+skipEmptyLines:true,
+
+complete:function(results){
+
+data = results.data.map(row => ({
+Diet_type: row["Diet_type"],
+Protein: parseFloat(row["Protein(g)"]),
+Carbs: parseFloat(row["Carbs(g)"]),
+Fat: parseFloat(row["Fat(g)"])
+})).filter(d => !isNaN(d.Protein));
+
+console.log("Loaded data:",data);
+}
+});
+}
+/* Load Charts */
+
+function loadCharts(){
+
+document.getElementById("barText").style.display="none";
+document.getElementById("scatterText").style.display="none";
+document.getElementById("heatmapText").style.display="none";
+document.getElementById("pieText").style.display="none";
+
+document.getElementById("barChart").style.display="block";
+document.getElementById("scatterChart").style.display="block";
+document.getElementById("heatmap").style.display="block";
+document.getElementById("pieChart").style.display="block";
+
+/* group data by diet type */
+
+const grouped = {};
+
+data.forEach(d => {
+
+if(!grouped[d.Diet_type]){
+grouped[d.Diet_type] = {Protein:0,Carbs:0,Fat:0,count:0};
+}
+
+grouped[d.Diet_type].Protein += d.Protein;
+grouped[d.Diet_type].Carbs += d.Carbs;
+grouped[d.Diet_type].Fat += d.Fat;
+grouped[d.Diet_type].count++;
+
+});
+
+const labels = Object.keys(grouped);
+
+const protein = labels.map(d => grouped[d].Protein / grouped[d].count);
+const carbs = labels.map(d => grouped[d].Carbs / grouped[d].count);
+const fat = labels.map(d => grouped[d].Fat / grouped[d].count);
+
+/* BAR CHART */
+
+new Chart(document.getElementById("barChart"),{
+type:"bar",
+data:{
+labels:labels,
+datasets:[
+{label:"Protein",data:protein},
+{label:"Carbs",data:carbs},
+{label:"Fat",data:fat}
+]
+}
+});
+
+/* SCATTER */
+
+const scatterPoints = protein.map((p,i)=>({x:p,y:carbs[i]}));
+
+new Chart(document.getElementById("scatterChart"),{
+type:"scatter",
+data:{
+datasets:[{
+label:"Protein vs Carbs",
+data:scatterPoints
+}]
+}
+});
+
+/* PIE */
+
+new Chart(document.getElementById("pieChart"),{
+type:"pie",
+data:{
+labels:labels,
+datasets:[{
+data:labels.map(()=>1)
+}]
+}
+});
+
+/* HEATMAP */
+
+const heatmap = document.getElementById("heatmap");
+heatmap.innerHTML = "";
+
+/* header row */
+
+heatmap.innerHTML += `
+<tr>
+<th>Diet</th>
+<th>Protein</th>
+<th>Carbs</th>
+<th>Fat</th>
+</tr>
+`;
+
+labels.forEach((diet,i) => {
+
+heatmap.innerHTML += `
+<tr>
+
+<td>${diet}</td>
+
+<td style="background-color: rgba(34,197,94,${protein[i]/100});">
+${protein[i].toFixed(1)}
+</td>
+
+<td style="background-color: rgba(59,130,246,${carbs[i]/100});">
+${carbs[i].toFixed(1)}
+</td>
+
+<td style="background-color: rgba(239,68,68,${fat[i]/100});">
+${fat[i].toFixed(1)}
+</td>
+
+</tr>
+`;
+
+});
+}
+
 /* API button selection */
+
 const apiButtons = document.querySelectorAll(".api-btn");
 
 apiButtons.forEach(btn=>{
 btn.addEventListener("click",()=>{
+
 apiButtons.forEach(b=>b.classList.remove("active"));
 btn.classList.add("active");
+
+if(btn.textContent.includes("Nutritional")){
+loadCharts();
+}
+
 });
 });
 
 /* pagination selection */
+
 const pageButtons = document.querySelectorAll(".page-btn");
 
 pageButtons.forEach(btn=>{
@@ -217,7 +370,8 @@ pageButtons.forEach(b=>b.classList.remove("active"));
 btn.classList.add("active");
 });
 });
-
+/* Initial Load */
+loadCSV();
 </script>
 
 </body>
