@@ -1,8 +1,10 @@
 from flask import Flask, jsonify, request, send_file
+from flask_cors import CORS
 import pandas as pd
 from sklearn.cluster import KMeans
 
 app = Flask(__name__)
+CORS(app)
 
 # Load CSV once at startup
 df = pd.read_csv("All_Diets.csv")
@@ -82,4 +84,6 @@ def clusters():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run()
+
+    # host="0.0.0.0", port=5000, debug=True (was in the run bracket, I put it here in case we need it again in debugging)
