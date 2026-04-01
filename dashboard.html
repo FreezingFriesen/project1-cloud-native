@@ -42,8 +42,10 @@
       border-radius: 12px;
       padding: 20px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-      min-height: 250px;
     }
+    .cards .card {
+  min-height: 250px;
+}
 
     .card strong {
       font-size: 18px;
@@ -150,6 +152,64 @@
       margin-top: 40px;
       font-size: 14px;
     }
+    .green { color:#16a34a; font-weight:600; }
+
+.oauth-btn {
+  background:#2f6fed;
+  color:white;
+  border:none;
+  padding:10px 16px;
+  border-radius:8px;
+  margin-right:10px;
+  cursor:pointer;
+}
+
+.oauth-btn.active {
+  outline: 3px solid black;
+}
+
+.input-box {
+width:100%;
+padding:10px;
+border-radius:8px;
+border:1px solid #ccc;
+margin-top:5px;
+}
+
+.cleanup-btn {
+background:#e53935;
+color:white;
+border:none;
+padding:10px 16px;
+border-radius:8px;
+cursor:pointer;
+margin-top:10px;
+}
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 30px;
+}
+
+.page-btn {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  background: #d1d5db;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.page-btn.active {
+  background: #2f6fed;
+  color: white;
+}
+
+.page-btn:hover {
+  background: #bfc5cc;
+}
   </style>
 </head>
 
@@ -232,9 +292,44 @@
         <tbody id="recipeBody"></tbody>
       </table>
     </div>
+    <h2>Security & Compliance</h2>
+
+<div class="card">
+  <strong>Security Status</strong>
+  <p>Encryption: <span class="green">Enabled</span></p>
+  <p>Access Control: <span class="green">Secure</span></p>
+  <p>Compliance: <span class="green">GDPR Compliant</span></p>
+</div>
+
+<h2>OAuth & 2FA Integration</h2>
+
+<div class="card">
+  <strong>Secure Login</strong>
+
+  <button class="oauth-btn">Login with Google</button>
+  <button class="oauth-btn">Login with GitHub</button>
+
+  <br><br>
+
+  <p>Enter 2FA Code</p>
+  <input type="text" placeholder="Enter your 2FA code" class="input-box">
+</div>
+
+<h2>Cloud Resource Cleanup</h2>
+
+<div class="card">
+  <p>Ensure that cloud resources are efficiently managed and cleaned up post-deployment.</p>
+
+  <button class="cleanup-btn" id="cleanupBtn">Clean Up Resources</button>
+</div>
 
     <h2>Pagination</h2>
-
+<div class="pagination">
+  <button class="page-btn">Previous</button>
+  <button class="page-btn active">1</button>
+  <button class="page-btn">2</button>
+  <button class="page-btn">Next</button>
+</div>
     <div class="pagination" id="paginationContainer">
     </div>
 
@@ -555,7 +650,26 @@
     /* ---- Initial Load ---- */
     loadDietTypes();
     loadInsights();
+document.getElementById("cleanupBtn").onclick = () => {
+  alert("Cleaned!");
+};
+document.querySelectorAll(".page-btn").forEach(btn => {
+  btn.addEventListener("click", function () {
+    document.querySelectorAll(".page-btn").forEach(b => b.classList.remove("active"));
+    this.classList.add("active");
+  });
+});
+document.querySelectorAll(".oauth-btn").forEach(btn => {
+  btn.addEventListener("click", function () {
 
+    // remove border from all buttons
+    document.querySelectorAll(".oauth-btn").forEach(b => b.classList.remove("active"));
+
+    // add border to clicked button
+    this.classList.add("active");
+
+  });
+});
   </script>
 
 </body>
