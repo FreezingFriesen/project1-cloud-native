@@ -656,25 +656,39 @@ margin-top:10px;
     /* ---- Initial Load ---- */
     loadDietTypes();
     loadInsights();
-document.getElementById("cleanupBtn").onclick = () => {
-  // 1. The "Print/Log" requirement (Visible in Browser Console)
-  console.log("Person 4: Initiating Cloud Resource Cleanup...");
+// document.getElementById("cleanupBtn").onclick = () => {
+//   // 1. The "Print/Log" requirement (Visible in Browser Console)
+//   console.log("Person 4: Initiating Cloud Resource Cleanup...");
   
-  // 2. The "Simulation" requirement (Visible to the User)
-  const btn = document.getElementById("cleanupBtn");
-  btn.innerText = "Cleaning... Check Console";
-  btn.style.backgroundColor = "#991b1b";
+//   // 2. The "Simulation" requirement (Visible to the User)
+//   const btn = document.getElementById("cleanupBtn");
+//   btn.innerText = "Cleaning... Check Console";
+//   btn.style.backgroundColor = "#991b1b";
 
-  setTimeout(() => {
-    console.log("Status: Scanning for orphaned snapshots...");
-    console.log("Status: Success - 4 unused volumes deleted.");
+//   setTimeout(() => {
+//     console.log("Status: Scanning for orphaned snapshots...");
+//     console.log("Status: Success - 4 unused volumes deleted.");
     
-    alert("Cloud Resource Cleanup Successful! Logs printed to console.");
+//     alert("Cloud Resource Cleanup Successful! Logs printed to console.");
     
-    btn.innerText = "Clean Up Resources";
-    btn.style.backgroundColor = "#e53935";
-  }, 1500);
+//     btn.innerText = "Clean Up Resources";
+//     btn.style.backgroundColor = "#e53935";
+//   }, 1500);
+// };
+
+document.getElementById("cleanupBtn").onclick = () => {
+  const log = document.getElementById("cleanupLog");
+  log.style.display = "block";
+  log.innerHTML = "> Connecting to Azure Resource Manager (ARM)...";
+
+  setTimeout(() => { log.innerHTML += "<br>> Scanning Resource Group: 'nutritional-insights-rg'..."; }, 800);
+  setTimeout(() => { 
+    log.innerHTML += "<br>> Success: 2 Orphaned Managed Disks found and purged."; 
+    log.innerHTML += "<br>> Success: Scaling App Service Plan down to 'F1 Free' tier.";
+    alert("Azure Resource Cleanup Complete!");
+  }, 2000);
 };
+
 document.querySelectorAll(".page-btn").forEach(btn => {
   btn.addEventListener("click", function () {
     document.querySelectorAll(".page-btn").forEach(b => b.classList.remove("active"));

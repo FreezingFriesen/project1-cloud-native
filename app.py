@@ -3,9 +3,8 @@ from flask_cors import CORS
 import pandas as pd
 from sklearn.cluster import KMeans
 
-app = Flask(__name__)
-CORS(app)
 app = Flask(__name__, static_folder="static")
+CORS(app)
 # Load CSV once at startup
 df = pd.read_csv("All_Diets.csv")
 df = df.rename(columns={"Protein(g)": "Protein", "Carbs(g)": "Carbs", "Fat(g)": "Fat"})
