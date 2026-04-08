@@ -320,11 +320,13 @@ margin-top:10px;
 </div>
 
 <h2>Cloud Resource Cleanup</h2>
-
 <div class="card">
   <p>Ensure that cloud resources are efficiently managed and cleaned up post-deployment.</p>
-
   <button class="cleanup-btn" id="cleanupBtn">Clean Up Resources</button>
+  
+  <div id="cleanupLog" style="display:none; margin-top:15px; padding:10px; background:#1a1a1a; color:#4ade80; font-family:monospace; font-size:12px; border-radius:6px; border-left:4px solid #e53935;">
+    <p style="margin:0;">> Initializing Cloud SDK...</p>
+  </div>
 </div>
 
     <h2>Pagination</h2>
@@ -655,7 +657,23 @@ margin-top:10px;
     loadDietTypes();
     loadInsights();
 document.getElementById("cleanupBtn").onclick = () => {
-  alert("Cleaned!");
+  // 1. The "Print/Log" requirement (Visible in Browser Console)
+  console.log("Person 4: Initiating Cloud Resource Cleanup...");
+  
+  // 2. The "Simulation" requirement (Visible to the User)
+  const btn = document.getElementById("cleanupBtn");
+  btn.innerText = "Cleaning... Check Console";
+  btn.style.backgroundColor = "#991b1b";
+
+  setTimeout(() => {
+    console.log("Status: Scanning for orphaned snapshots...");
+    console.log("Status: Success - 4 unused volumes deleted.");
+    
+    alert("Cloud Resource Cleanup Successful! Logs printed to console.");
+    
+    btn.innerText = "Clean Up Resources";
+    btn.style.backgroundColor = "#e53935";
+  }, 1500);
 };
 document.querySelectorAll(".page-btn").forEach(btn => {
   btn.addEventListener("click", function () {
